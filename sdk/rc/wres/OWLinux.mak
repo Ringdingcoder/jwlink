@@ -12,7 +12,7 @@ wres_distrib_lib = 1
 WATCOM = \watcom
 !endif
 
-watcom_dir=..\..\..\watcom
+watcom_dir=../../../watcom
 wres_dir = .
 
 !ifndef DEBUG
@@ -20,9 +20,9 @@ DEBUG=0
 !endif
 
 !if $(DEBUG)
-OUTD=..\..\..\build\wresWD
+OUTD=../../../build/wresLD
 !else
-OUTD=..\..\..\build\wresWR
+OUTD=../../../build/wresLR
 !endif
 
 #
@@ -93,19 +93,19 @@ cflags = -ox -s -DNDEBUG
 
 .c : $(wres_dir)/c
 
-inc_dirs = -I"$(wres_dir)/h" -I$(watcom_dir)\H -I$(WATCOM)\H  -I..\..\..\H
+inc_dirs = -I"$(wres_dir)/h" -I$(watcom_dir)/h -I$(WATCOM)/h  -I../../../h
 
 .c{$(OUTD)}.obj: $($(proj_name)_autodepends)
-	$(WATCOM)\binnt\wcc386 -q -zc -bc -bt=nt $(cflags) $(extra_c_flags_$[&) $(inc_dirs) -fo$@ $[@
+	$(WATCOM)/binl/wcc386 -q -zc -bc -bt=linux $(cflags) $(extra_c_flags_$[&) $(inc_dirs) -fo$@ $[@
 
 # explicit rules
 
-ALL: $(OUTD) $(OUTD)\wres.lib
+ALL: $(OUTD) $(OUTD)/wres.lib
 
 $(OUTD):
 	@if not exist $(OUTD) mkdir $(OUTD)
 
-$(OUTD)\wres.lib : $(objs) $(__MAKEFILES__) .PRECIOUS
-    %create $(OUTD)\$^&.lbc
-    @for %i in ($(objs)) do @%append $(OUTD)\$^&.lbc +%i
-    jwlib -n $(OUTD)\wres.lib @$(OUTD)\$^&.lbc
+$(OUTD)/wres.lib : $(objs) $(__MAKEFILES__) .PRECIOUS
+    %create $(OUTD)/$^&.lbc
+    @for %i in ($(objs)) do @%append $(OUTD)/$^&.lbc +%i
+    jwlib -n $(OUTD)/wres.lib @$(OUTD)/$^&.lbc

@@ -7,7 +7,7 @@ host_cpu = 386
 WATCOM= \watcom
 !endif
 
-watcom_dir=..\watcom
+watcom_dir=../watcom
 
 proj_name       = orl
 orl_autodepends = .autodepend
@@ -18,10 +18,10 @@ DEBUG=0
 
 !if $(DEBUG)
 cflags = -od -d2 -w3 -D_INT_DEBUG
-OUTD= ..\build\osi386WD
+OUTD= ../build/osi386LD
 !else
 cflags = -ox -s -DNDEBUG
-OUTD= ..\build\osi386WR
+OUTD= ../build/osi386LR
 !endif
 
 #
@@ -53,12 +53,12 @@ orl_objs  = $(OUTD)/orlentry.obj &
             $(coff_objs)
 
 .c{$(OUTD)}.obj: $($(proj_name)_autodepends)
-	$(WATCOM)\binnt\wcc386 -q -zc -bc -bt=nt $(cflags) $(inc_dirs) -fo$@ $[@
+	$(WATCOM)/binl/wcc386 -q -zc -bc -bt=linux $(cflags) $(inc_dirs) -fo$@ $[@
 
 .c: ./c;./elf/c;./coff/c;./omf/c
 .h: ./h;./elf/h;./coff/h;./omf/h
 
-inc_dirs = -Ih -Ielf\h -Icoff\h -Iomf\h -I..\h -I$(watcom_dir)\h -I$(WATCOM)\H
+inc_dirs = -Ih -Ielf/h -Icoff/h -Iomf/h -I../h -I$(watcom_dir)/h -I$(WATCOM)/h
 
 ALL : $(OUTD) $(OUTD)/orl.lib
 

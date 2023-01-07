@@ -3,7 +3,7 @@
 
 proj_name = jwlib
 
-WATCOM=\watcom
+WATCOM=$(%WATCOM)
 
 !ifndef wlib_autodepends
 wlib_autodepends = .AUTODEPEND
@@ -19,7 +19,13 @@ orl_dir      = ../orl
 watcom_dir   = ../watcom
 lib_misc_dir = ../lib_misc
 
-orl_lib  = $(orl_dir)/osi386/orl.lib
+!if $(DEBUG)
+outd_suffix=D
+!else
+outd_suffix=R
+!endif
+
+orl_lib  = ../build/osi386L$(outd_suffix)/orl.lib
 
 ##########
 # objects
@@ -40,7 +46,7 @@ common_objs = &
 
 comp_objs_exe = $(common_objs)
 
-xlibs = $(orl_lib) 
+xlibs = $(orl_lib)
 external_dependencies = $(xlibs)
 
 depends_exe = $(comp_objs_exe) $(external_dependencies)
@@ -49,11 +55,11 @@ depends_exe = $(comp_objs_exe) $(external_dependencies)
 # cflags
 
 !if $(DEBUG)
-OUTD=..\build\jwlibLD
+OUTD=../build/jwlibLD
 extra_c_flags += -D__DEBUG__
 cflags = -od -d2 -w3
 !else
-OUTD=..\build\jwlibLR
+OUTD=../build/jwlibL$(outd_suffix)
 cflags = -ox -s -DNDEBUG
 !endif
 
@@ -62,21 +68,21 @@ extra_c_flags += -DIDE_PGM
 .c: c;$(lib_misc_dir)/c
 .h: h;$(watcom_dir)/h
 
-inc_dirs = -Ih -I"$(orl_dir)/h" -I"$(lib_misc_dir)/h" -I"$(watcom_dir)/H" -I$(WATCOM)\LH 
+inc_dirs = -Ih -I"$(orl_dir)/h" -I"$(lib_misc_dir)/h" -I"$(watcom_dir)/h" -I$(WATCOM)/lh
 
 .c{$(OUTD)}.obj: $($(proj_name)_autodepends)
-	$(WATCOM)\binnt\wcc386 -q -zc -bc -bt=linux $(cflags) $(extra_c_flags) $(inc_dirs) -fo$@ $[@
+	$(WATCOM)/binl/wcc386 -q -zc -bc -bt=linux $(cflags) $(extra_c_flags) $(inc_dirs) -fo$@ $[@
 
-ALL: $(OUTD) $(OUTD)/jwlib.
+ALL: $(OUTD) $(OUTD)/jwlib
 
 $(OUTD):
 	@if not exist $(OUTD) mkdir $(OUTD)
 
-$(OUTD)/jwlib.: $(depends_exe)
-	jwlink format elf ru linux name $*. @<<
+$(OUTD)/jwlib: $(depends_exe)
+	jwlink format elf ru linux name $* @<<
 f {$(comp_objs_exe)}
-libpath $(WATCOM)\lib386
-libpath $(WATCOM)\lib386\linux
+libpath $(WATCOM)/lib386
+libpath $(WATCOM)/lib386/linux
 lib {$(xlibs) }
 op q, map=$*
 <<

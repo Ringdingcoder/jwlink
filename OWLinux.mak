@@ -5,16 +5,16 @@
 # orl, plusplus, dwarf, watcom, and trmem
 
 # the path of the Open Watcom root directory
-WATCOM=\watcom
+WATCOM=$(%WATCOM)
 
 !ifndef DEBUG
 DEBUG=0
 !endif
 
 !if $(DEBUG)
-OUTD=build\jwlinkLD
+OUTD=build/jwlinkLD
 !else
-OUTD=build\jwlinkLR
+OUTD=build/jwlinkLR
 !endif
 
 wlink_trmem = 0
@@ -64,7 +64,7 @@ common_objs = &
 !ifeq wlink_trmem
     $(OUTD)/$(trmem_objs) &
 !endif
-    $(OUTD)/rcstr.obj 
+    $(OUTD)/rcstr.obj
 
 !ifeq use_virtmem 1
 common_objs += $(OUTD)/virtmem.obj
@@ -88,7 +88,7 @@ common_objs += $(wlink_objs_$(host_os))
 !ifdef no_orl
 # do not link against ORL
 common_objs += $(OUTD)/orlstubs.obj
-orl_lib = 
+orl_lib =
 !endif
 
 comp_objs_exe = $(common_objs) $(exe_objs)
@@ -103,16 +103,16 @@ orl_lib     = build/osi386LR/orl.lib
 dwarf_dw_lib= build/osi386LR/dw.lib
 wres_lib    = build/wresLR/wres.lib
 
-inc_dirs = -IH -I$(watcom_dir)\H -I$(WATCOM)\LH -I$(WATCOM)\H 
+inc_dirs = -Ih -I$(watcom_dir)/h -I$(WATCOM)/lh -I$(WATCOM)/h
 
 !if $(DEBUG)
-cflags = -od -d2 -w3 -D_INT_DEBUG 
+cflags = -od -d2 -w3 -D_INT_DEBUG
 !else
 cflags = -ox -s -DNDEBUG
 !endif
 
 .c{$(OUTD)}.obj: $($(proj_name)_autodepends)
-	$(WATCOM)\binnt\wcc386 -q -zc -bc -bt=linux $(cflags) $(extra_c_flags_$[&) $(inc_dirs) -fo$@ $[@
+	$(WATCOM)/binl/wcc386 -q -zc -bc -bt=linux $(cflags) $(extra_c_flags_$[&) $(inc_dirs) -fo$@ $[@
 
 .c: c;$(wrc_dir)/c;$(lib_misc_dir)/c;$(trmem_dir)
 
@@ -142,7 +142,7 @@ extra_c_flags_posixio    = -I"$(wres_dir)/h"
 extra_c_flags_linkio     = -I"$(wres_dir)/h"
 extra_c_flags_objorl     = -I"orl/h"
 extra_c_flags_orlstubs   = -I"orl/h"
-extra_c_flags_dbgdwarf   = -I"$(dwarf_dir)/dw/h"
+extra_c_flags_dbgdwarf   = -I"$(dwarf_dir)/h"
 !ifdef wlink_trmem
 extra_c_flags_debug      = -DTRMEM
 !endif
@@ -161,7 +161,7 @@ extra_c_flags_mem        = $(trmem_cover_cflags)
 
 extra_l_flags     = op map=$^*, noredefs, norelocs
 
-xlibs = $(wres_lib) $(dwarf_dw_lib) $(orl_lib)
+xlibs = $(orl_lib) $(dwarf_dw_lib) $(wres_lib)
 
 !if $(DEBUG)
 lflags = debug dwarf op symfile $(extra_l_flags)
@@ -172,12 +172,12 @@ lflags = $(extra_l_flags)
 #################
 # explicit rules
 
-ALL: $(OUTD) $(OUTD)/jwlink.
+ALL: $(OUTD) $(OUTD)/jwlink
 
 $(OUTD):
 	@if not exist $(OUTD) mkdir $(OUTD)
 
-$(OUTD)/jwlink. : $(comp_objs_exe) $(xlibs)
+$(OUTD)/jwlink : $(comp_objs_exe) $(xlibs)
 	jwlink format elf runtime linux $(lflags) name $@ @<<
 file { $(common_objs) }
 libpath $(WATCOM)/lib386
@@ -187,10 +187,15 @@ lib { $(xlibs) }
 
 $(wres_lib):
 	@cd $(wres_dir)
-	@wmake debug=$(DEBUG) watcom=$(WATCOM)
+	@wmake -f OWLinux.mak debug=$(DEBUG) watcom=$(WATCOM)
 	@cd ../../..
 
 $(orl_lib):
 	@cd orl
-	@wmake debug=$(DEBUG) watcom=$(WATCOM)
+	@wmake -f OWLinux.mak debug=$(DEBUG) watcom=$(WATCOM)
+	@cd ..
+
+$(dwarf_dw_lib):
+	@cd dwarf
+	@wmake -f OWLinux.mak debug=$(DEBUG) watcom=$(WATCOM)
 	@cd ..
