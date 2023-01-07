@@ -2,7 +2,7 @@
 proj_name = dwarfw
 
 !ifndef WATCOM
-WATCOM=\watcom
+WATCOM=/watcom
 !endif
 
 !ifndef DEBUG
@@ -15,7 +15,7 @@ outd_suffix=D
 outd_suffix=R
 !endif
 
-OUTD=..\build\osi386W$(outd_suffix)
+OUTD=../build/osi386W$(outd_suffix)
 
 
 !ifndef dwarfw_autodepends
@@ -24,18 +24,18 @@ dwarfw_autodepends = .AUTODEPEND
 
 objs = $(OUTD)/dwlngen.obj $(OUTD)/dwutils.obj
 
-watcom_dir=..\watcom
+watcom_dir=../watcom
 
 .c : c
 
-inc_dirs = -IH -I$(watcom_dir)\H -I$(WATCOM)\H 
+inc_dirs = -Ih -I$(watcom_dir)/h -I$(WATCOM)/h
 
 cflags = -ox -s -DNDEBUG
 
-extra_c_flags = 
+extra_c_flags =
 
 .c{$(OUTD)}.obj: $($(proj_name)_autodepends)
-	$(WATCOM)\binnt\wcc386 -q -zc -bc -bt=nt $(cflags) $(extra_c_flags_$[&) $(inc_dirs) -fo$@ $[@
+	$(WATCOM)/binl/wcc386 -q -zc -bc -bt=nt $(cflags) $(extra_c_flags_$[&) $(inc_dirs) -fo$@ $[@
 
 ALL: $(OUTD) $(OUTD)/dw.lib
 

@@ -9,12 +9,10 @@
 # - INTDBG - dump symbol table
 
 # the path of the Open Watcom root directory
-WATCOM=\watcom
+WATCOM=$(%WATCOM)
 
 # set to 0 if the DOS version is NOT to be built!
-DOS=1
-# set path of HX if DOS=1
-HXDIR=\hx
+DOS=0
 
 !ifndef DEBUG
 DEBUG=0
@@ -28,7 +26,7 @@ wlink_trmem = 0
 outd_suffix=R
 !endif
 
-OUTD=build\jwlinkW$(outd_suffix)
+OUTD=build/jwlinkW$(outd_suffix)
 
 proj_name = jwlink
 host_os  = nt
@@ -74,7 +72,7 @@ common_objs = &
 !ifeq wlink_trmem 1
     $(OUTD)/$(trmem_objs) &
 !endif
-    $(OUTD)/exerespe.obj  $(OUTD)/sharedio.obj  $(OUTD)/rcstr.obj 
+    $(OUTD)/exerespe.obj  $(OUTD)/sharedio.obj  $(OUTD)/rcstr.obj
 
 !ifeq use_virtmem 1
 common_objs += $(OUTD)/virtmem.obj
@@ -102,7 +100,7 @@ lib_misc_dir=lib_misc
 dwarf_dir=dwarf
 watcom_dir=watcom
 
-inc_dirs = -IH -I$(watcom_dir)\H -I$(WATCOM)\H 
+inc_dirs = -Ih -I$(watcom_dir)/h -I$(WATCOM)/h
 
 !if $(DEBUG)
 cflags = -od -d2 -w3 -hc -D_INT_DEBUG
@@ -110,15 +108,15 @@ cflags = -od -d2 -w3 -hc -D_INT_DEBUG
 cflags = -ox -s -DNDEBUG
 !endif
 
-outd_orl_lib   = build\osi386W$(outd_suffix)
-outd_dwarf_lib = build\osi386W$(outd_suffix)
-outd_wres_lib  = build\wresW$(outd_suffix)
-orl_lib  = $(outd_orl_lib)\orl.lib
-dwarf_lib= $(outd_dwarf_lib)\dw.lib
-wres_lib = $(outd_wres_lib)\wres.lib
+outd_orl_lib   = build/osi386W$(outd_suffix)
+outd_dwarf_lib = build/osi386W$(outd_suffix)
+outd_wres_lib  = build/wresW$(outd_suffix)
+orl_lib  = $(outd_orl_lib)/orl.lib
+dwarf_lib= $(outd_dwarf_lib)/dw.lib
+wres_lib = $(outd_wres_lib)/wres.lib
 
 .c{$(OUTD)}.obj: $($(proj_name)_autodepends)
-	$(WATCOM)\binnt\wcc386 -q -zc -bc -bt=nt $(cflags) $(extra_c_flags_$[&) $(inc_dirs) -fo$@ $[@
+	$(WATCOM)/binl/wcc386 -q -zc -bc -bt=nt $(cflags) $(extra_c_flags_$[&) $(inc_dirs) -fo$@ $[@
 
 .c: c;$(wrc_dir)/c;$(lib_misc_dir)/c;$(trmem_dir)
 
@@ -163,7 +161,7 @@ xlibs = $(wres_lib) $(dwarf_lib) $(orl_lib)
 !if $(DEBUG)
 lflagsd = debug c op cvp, symfile
 !else
-lflagsd = 
+lflagsd =
 !endif
 
 #################
@@ -176,7 +174,7 @@ $(OUTD):
 
 $(OUTD)/JWlink.exe : $(comp_objs_exe) $(xlibs)
 	jwlink $(lflagsd) format windows pe runtime console $(extra_l_flags) @<<
-libpath $(WATCOM)\lib386\nt libpath $(WATCOM)\lib386
+libpath $(WATCOM)/lib386/nt libpath $(WATCOM)/lib386
 file { $(common_objs) }
 name $@
 lib { $(xlibs) }
@@ -214,13 +212,13 @@ $(dwarf_lib):
 	@cd ..
 
 clean: .SYMBOLIC
-	@if exist $(OUTD)\$(proj_name).exe erase $(OUTD)\$(proj_name).exe
-	@if exist $(OUTD)\$(proj_name).map erase $(OUTD)\$(proj_name).map
-	@if exist $(OUTD)\*.obj erase $(OUTD)\*.obj
+	@if exist $(OUTD)/$(proj_name).exe erase $(OUTD)/$(proj_name).exe
+	@if exist $(OUTD)/$(proj_name).map erase $(OUTD)/$(proj_name).map
+	@if exist $(OUTD)/*.obj erase $(OUTD)/*.obj
 	@if exist $(orl_lib)   erase $(orl_lib)
 	@if exist $(dwarf_lib) erase $(dwarf_lib)
 	@if exist $(wres_lib)  erase $(wres_lib)
-	@if exist $(outd_orl_lib)\*.obj   erase $(outd_orl_lib)\*.obj
-	@if exist $(outd_dwarf_lib)\*.obj erase $(outd_dwarf_lib)\*.obj
-	@if exist $(outd_wres_lib)\*.obj  erase $(outd_wres_lib)\*.obj
+	@if exist $(outd_orl_lib)/*.obj   erase $(outd_orl_lib)/*.obj
+	@if exist $(outd_dwarf_lib)/*.obj erase $(outd_dwarf_lib)/*.obj
+	@if exist $(outd_wres_lib)/*.obj  erase $(outd_wres_lib)/*.obj
 
