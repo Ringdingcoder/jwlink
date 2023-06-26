@@ -45,5 +45,5 @@ $(OUTD):
 $(OUTD)/dw.lib : $(objs)
         @%create tmp.lbc
         @for %i in ($(objs)) do @%append tmp.lbc +%i
-        jwlib -n $(OUTD)/dw.lib @tmp.lbc
+        wlib -n $(OUTD)/dw.lib @tmp.lbc
 

@@ -178,7 +178,7 @@ $(OUTD):
 	@if not exist $(OUTD) mkdir $(OUTD)
 
 $(OUTD)/jwlink : $(comp_objs_exe) $(xlibs)
-	jwlink format elf runtime linux $(lflags) name $@ @<<
+	wlink format elf runtime linux $(lflags) name $@ @<<
 file { $(common_objs) }
 libpath $(WATCOM)/lib386
 libpath $(WATCOM)/lib386/linux

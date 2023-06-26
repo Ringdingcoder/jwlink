@@ -79,7 +79,7 @@ $(OUTD):
 	@if not exist $(OUTD) mkdir $(OUTD)
 
 $(OUTD)/jwlib: $(depends_exe)
-	jwlink format elf ru linux name $* @<<
+	wlink format elf ru linux name $* @<<
 f {$(comp_objs_exe)}
 libpath $(WATCOM)/lib386
 libpath $(WATCOM)/lib386/linux

@@ -108,4 +108,4 @@ $(OUTD):
 $(OUTD)/wres.lib : $(objs) $(__MAKEFILES__) .PRECIOUS
     %create $(OUTD)/$^&.lbc
     @for %i in ($(objs)) do @%append $(OUTD)/$^&.lbc +%i
-    jwlib -n $(OUTD)/wres.lib @$(OUTD)/$^&.lbc
+    wlib -n $(OUTD)/wres.lib @$(OUTD)/$^&.lbc
